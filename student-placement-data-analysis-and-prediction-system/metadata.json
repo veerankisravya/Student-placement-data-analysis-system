@@ -1,0 +1,6 @@
+{
+  "name": "Student Placement Data Analysis and Prediction System",
+  "description": "Enterprise-grade analytics dashboard and machine learning prediction system for student academic performance, skill benchmarks, company recruitment trends, and placement outcomes.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
