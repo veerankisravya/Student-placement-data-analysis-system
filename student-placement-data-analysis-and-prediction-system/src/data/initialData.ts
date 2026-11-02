@@ -1,12 +1,4 @@
-import { Student, Company, User } from '../types';
-
-export const INITIAL_USER: User = {
-  id: 'USR-001',
-  name: 'Dr. Rajeshwar Sharma',
-  email: 'tpo@university.edu.in',
-  role: 'Placement Officer',
-  collegeName: 'National Institute of Technology & Engineering',
-};
+import { Student, Company } from '../types';
 
 export const INITIAL_COMPANIES: Company[] = [
   {

@@ -1,9 +1,10 @@
 import { Student, Company, User, Department } from '../types';
-import { INITIAL_STUDENTS, INITIAL_COMPANIES, INITIAL_USER, HISTORICAL_YEAR_STATS } from '../data/initialData';
+import { INITIAL_STUDENTS, INITIAL_COMPANIES, HISTORICAL_YEAR_STATS } from '../data/initialData';
 
 const STUDENTS_STORAGE_KEY = 'sp_students_data_v1';
 const COMPANIES_STORAGE_KEY = 'sp_companies_data_v1';
-const USER_STORAGE_KEY = 'sp_user_session_v1';
+const USER_STORAGE_KEY = 'sp_user_session_v2';
+const SESSION_USER_STORAGE_KEY = 'sp_user_session_tab_v2';
 const THEME_STORAGE_KEY = 'sp_theme_preference_v1';
 
 export const storage = {
@@ -75,21 +76,26 @@ export const storage = {
 
   getCurrentUser(): User | null {
     try {
-      const stored = localStorage.getItem(USER_STORAGE_KEY);
+      const stored = localStorage.getItem(USER_STORAGE_KEY) ?? sessionStorage.getItem(SESSION_USER_STORAGE_KEY);
       if (stored) {
         return JSON.parse(stored);
       }
     } catch {
-      // ignore
+      return null;
     }
-    return INITIAL_USER;
+    return null;
   },
 
-  setCurrentUser(user: User | null): void {
+  setCurrentUser(user: User | null, remember?: boolean): void {
     if (user) {
-      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
+      const shouldRemember = remember ?? localStorage.getItem(USER_STORAGE_KEY) !== null;
+      const storageArea = shouldRemember ? localStorage : sessionStorage;
+      const otherStorageArea = shouldRemember ? sessionStorage : localStorage;
+      storageArea.setItem(shouldRemember ? USER_STORAGE_KEY : SESSION_USER_STORAGE_KEY, JSON.stringify(user));
+      otherStorageArea.removeItem(shouldRemember ? SESSION_USER_STORAGE_KEY : USER_STORAGE_KEY);
     } else {
       localStorage.removeItem(USER_STORAGE_KEY);
+      sessionStorage.removeItem(SESSION_USER_STORAGE_KEY);
     }
   },
 

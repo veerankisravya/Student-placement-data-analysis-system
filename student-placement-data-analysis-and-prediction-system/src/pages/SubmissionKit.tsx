@@ -161,7 +161,7 @@ def predict_student_placement(data):
     logit += (aptitude - 50.0) * 0.042
     logit += (tech - 50.0) * 0.055
     logit += (comm - 50.0) * 0.032
-    logit += min(internship, 6.0) * 0.28
+    logit += min(internship, 6.0) * 0.28 + max(internship - 6.0, 0.0) * 0.08
 
     prob = 1.0 / (1.0 + np.exp(-logit))
     prob_percent = int(round(np.clip(prob * 100, 5, 98)))
@@ -174,7 +174,7 @@ def predict_student_placement(data):
     return {
         "probability_percent": prob_percent,
         "classification": classification,
-        "estimated_package_range": "18-42 LPA (Super Dream)" if prob_percent >= 85 and tech >= 85 else "8-16 LPA (Dream)" if prob_percent >= 70 else "5-8.5 LPA"
+        "estimated_package_range": "18-42 LPA (Super Dream)" if prob_percent >= 85 and tech >= 85 and cgpa >= 8.2 else "8-16 LPA (Dream)" if prob_percent >= 70 and (tech >= 75 or cgpa >= 7.8) else "5-8.5 LPA"
     }`
     },
     'app.py': {
@@ -185,10 +185,10 @@ def predict_student_placement(data):
 Flask Application Entry Point
 Student Placement Data Analysis and Prediction System
 """
-from flask import Flask, jsonify, request, session
+import os
+from flask import Flask, jsonify, request
 import mysql.connector
 from config import Config
-from services.data_analysis import compute_placement_statistics
 from services.prediction import predict_student_placement
 
 app = Flask(__name__)
@@ -200,12 +200,16 @@ def health_check():
 
 @app.route('/api/predict', methods=['POST'])
 def predict_endpoint():
-    data = request.get_json() or {}
+    if not request.is_json:
+        return jsonify({"error": "Content-Type must be application/json."}), 415
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return jsonify({"error": "The request body must be a JSON object."}), 400
     result = predict_student_placement(data)
     return jsonify(result)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)`
+    app.run(debug=False, host='0.0.0.0', port=int(os.getenv('PORT', '5000')))`
     },
     'README.md': {
       label: 'README.md (Project Report)',

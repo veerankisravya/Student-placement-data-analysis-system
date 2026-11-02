@@ -47,9 +47,9 @@ export default function App() {
     storage.setTheme(nextTheme);
   };
 
-  const handleLoginSuccess = (user: User) => {
+  const handleLoginSuccess = (user: User, remember: boolean) => {
     setCurrentUser(user);
-    storage.setCurrentUser(user);
+    storage.setCurrentUser(user, remember);
   };
 
   const handleLogout = () => {

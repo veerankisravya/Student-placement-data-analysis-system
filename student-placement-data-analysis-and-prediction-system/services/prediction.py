@@ -28,7 +28,7 @@ def predict_student_placement(data):
     logit += (aptitude - 50.0) * 0.042
     logit += (tech - 50.0) * 0.055
     logit += (comm - 50.0) * 0.032
-    logit += min(internship, 6.0) * 0.28
+    logit += min(internship, 6.0) * 0.28 + max(internship - 6.0, 0.0) * 0.08
 
     prob = 1.0 / (1.0 + np.exp(-logit))
     prob_percent = int(round(np.clip(prob * 100, 5, 98)))
@@ -41,7 +41,7 @@ def predict_student_placement(data):
     pkg = "3.5 - 6.5 LPA"
     if prob_percent >= 85 and tech >= 85 and cgpa >= 8.2:
         pkg = "18.0 - 42.0 LPA (Super Dream)"
-    elif prob_percent >= 70:
+    elif prob_percent >= 70 and (tech >= 75 or cgpa >= 7.8):
         pkg = "8.0 - 16.0 LPA (Dream Tier)"
     elif prob_percent >= 50:
         pkg = "5.0 - 8.5 LPA (Core / IT Services)"

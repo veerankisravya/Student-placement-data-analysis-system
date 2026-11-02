@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Eye, EyeOff, Lock, Mail, ShieldCheck, ArrowRight, Info, CheckCircle } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail, ShieldCheck, ArrowRight, Info } from 'lucide-react';
 import { User } from '../types';
+import placementCellLogo from '../assets/images/placement_cell_logo_1792730644831.jpg';
 
 interface LoginProps {
-  onLoginSuccess: (user: User) => void;
+  onLoginSuccess: (user: User, remember: boolean) => void;
 }
 
 export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
@@ -14,8 +15,39 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showForgotModal, setShowForgotModal] = useState(false);
-  const [forgotEmail, setForgotEmail] = useState('');
-  const [forgotSuccess, setForgotSuccess] = useState(false);
+
+  const demoAccounts: Record<string, { password: string; user: User }> = {
+    'tpo@university.edu.in': {
+      password: 'Placement@2024',
+      user: {
+        id: 'USR-TPO-01',
+        name: 'Dr. Rajeshwar Sharma (TPO Head)',
+        email: 'tpo@university.edu.in',
+        role: 'Placement Officer',
+        collegeName: 'National Institute of Technology & Engineering',
+      },
+    },
+    'dean@university.edu.in': {
+      password: 'Academic@2024',
+      user: {
+        id: 'USR-DEAN-01',
+        name: 'Prof. K. Venkatesh (Dean Academics)',
+        email: 'dean@university.edu.in',
+        role: 'Dean / Administrator',
+        collegeName: 'National Institute of Technology & Engineering',
+      },
+    },
+    'faculty.cse@university.edu.in': {
+      password: 'Faculty@2024',
+      user: {
+        id: 'USR-FAC-01',
+        name: 'Dr. Meenakshi Rao (CSE Dept)',
+        email: 'faculty.cse@university.edu.in',
+        role: 'Department Faculty',
+        collegeName: 'National Institute of Technology & Engineering',
+      },
+    },
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,21 +60,16 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
 
     setIsLoading(true);
 
+    const account = demoAccounts[email.trim().toLowerCase()];
+    if (!account || account.password !== password) {
+      setIsLoading(false);
+      setError('Invalid demo email or password.');
+      return;
+    }
+
     setTimeout(() => {
       setIsLoading(false);
-      // Realistic role resolution
-      const isDean = email.toLowerCase().includes('dean');
-      const isFaculty = email.toLowerCase().includes('faculty');
-
-      const user: User = {
-        id: isDean ? 'USR-DEAN-01' : isFaculty ? 'USR-FAC-01' : 'USR-TPO-01',
-        name: isDean ? 'Prof. K. Venkatesh (Dean Academics)' : isFaculty ? 'Dr. Meenakshi Rao (CSE Dept)' : 'Dr. Rajeshwar Sharma (TPO Head)',
-        email: email.trim(),
-        role: isDean ? 'Dean / Administrator' : isFaculty ? 'Department Faculty' : 'Placement Officer',
-        collegeName: 'National Institute of Technology & Engineering',
-      };
-
-      onLoginSuccess(user);
+      onLoginSuccess(account.user, rememberMe);
     }, 400);
   };
 
@@ -67,7 +94,7 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
           <div className="p-8 text-center border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
             <div className="w-20 h-20 mx-auto rounded-2xl p-1 bg-white dark:bg-slate-800 shadow-md border border-slate-200 dark:border-slate-700 mb-4 flex items-center justify-center overflow-hidden">
               <img
-                src="/src/assets/images/placement_cell_logo_1792730644831.jpg"
+                src={placementCellLogo}
                 alt="University Placement Cell"
                 className="w-full h-full object-contain"
                 referrerPolicy="no-referrer"
@@ -82,6 +109,9 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
           </div>
 
           <div className="p-8">
+            <div className="mb-5 p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg text-xs text-amber-800 dark:text-amber-200">
+              Demo only: this client-side sign-in is not secure and must not be used with real student data.
+            </div>
             <div className="mb-6">
               <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">
                 Staff Authentication
@@ -158,7 +188,7 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                     className="w-3.5 h-3.5 rounded text-teal-600 focus:ring-teal-500 border-slate-300 dark:border-slate-700"
                   />
                   <span className="text-xs text-slate-600 dark:text-slate-400">
-                    Remember my credentials
+                    Keep me signed in on this device
                   </span>
                 </label>
                 <div className="flex items-center gap-1 text-[11px] text-slate-400">
@@ -229,48 +259,18 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
               Reset Security Credentials
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-              Enter your registered university email to receive a password recovery link.
+              Password recovery is not available in this client-side demo. Contact your system administrator.
             </p>
-
-            {forgotSuccess ? (
-              <div className="my-4 p-3 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-200 rounded-lg text-xs flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 shrink-0 text-emerald-600" />
-                <span>Recovery instructions dispatched to your mailbox!</span>
-              </div>
-            ) : (
-              <div className="my-4">
-                <input
-                  type="email"
-                  value={forgotEmail}
-                  onChange={(e) => setForgotEmail(e.target.value)}
-                  placeholder="your.email@university.edu.in"
-                  className="w-full px-3 py-2 text-xs border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
-                />
-              </div>
-            )}
 
             <div className="flex justify-end gap-2 mt-4">
               <button
                 onClick={() => {
                   setShowForgotModal(false);
-                  setForgotSuccess(false);
                 }}
                 className="px-3 py-1.5 text-xs text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"
               >
                 Close
               </button>
-              {!forgotSuccess && (
-                <button
-                  onClick={() => {
-                    if (forgotEmail.trim()) {
-                      setForgotSuccess(true);
-                    }
-                  }}
-                  className="px-3 py-1.5 text-xs bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-lg"
-                >
-                  Send Reset Link
-                </button>
-              )}
             </div>
           </div>
         </div>

@@ -12,6 +12,7 @@ import {
   GraduationCap
 } from 'lucide-react';
 import { User } from '../types';
+import placementCellLogo from '../assets/images/placement_cell_logo_1792730644831.jpg';
 
 interface SidebarProps {
   activeTab: string;
@@ -43,7 +44,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <div className="p-4 border-b border-slate-800/80 flex items-center gap-3">
         <div className="w-10 h-10 rounded-lg overflow-hidden bg-white/10 shrink-0 border border-slate-700/60 p-0.5">
           <img
-            src="/src/assets/images/placement_cell_logo_1792730644831.jpg"
+            src={placementCellLogo}
             alt="Placement Cell Logo"
             className="w-full h-full object-contain"
             referrerPolicy="no-referrer"

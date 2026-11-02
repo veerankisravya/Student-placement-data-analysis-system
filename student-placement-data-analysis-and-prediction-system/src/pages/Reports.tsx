@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { Student, Company } from '../types';
 import { storage } from '../services/storage';
+import placementCellLogo from '../assets/images/placement_cell_logo_1792730644831.jpg';
 
 interface ReportsProps {
   students: Student[];
@@ -114,7 +115,7 @@ export const Reports: React.FC<ReportsProps> = ({ students, companies }) => {
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 p-0.5">
               <img
-                src="/src/assets/images/placement_cell_logo_1792730644831.jpg"
+                src={placementCellLogo}
                 alt="University Seal"
                 className="w-full h-full object-contain"
                 referrerPolicy="no-referrer"

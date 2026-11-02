@@ -1,0 +1,6 @@
+app.py
+config.py
+requirements.txt
+database/
+services/*.py
+SETUP_WINDOWS.md

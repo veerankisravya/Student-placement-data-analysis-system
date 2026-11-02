@@ -1,100 +1,36 @@
-# Windows PowerShell Setup Guide
+# Windows Setup Guide
 ## Student Placement Data Analysis and Prediction System
 
-Follow these step-by-step instructions in Windows PowerShell to set up and run the system locally with Python Flask and MySQL.
+The project has a Vite/React demo dashboard and a separate Flask API/MySQL starter. The dashboard currently uses browser-local sample data; it does not call the Flask API or connect to MySQL.
 
----
+### Run the frontend
 
-### Step 1: Clone or Navigate to the Project Folder
-Open Windows PowerShell as an Administrator or regular user:
+From the project directory in PowerShell:
+
 ```powershell
-cd C:\Projects\placement_analysis
+npm install
+npm run lint
+npm run build
+npm run dev
 ```
 
----
+Open the local URL printed by Vite. The sign-in screen lists demo accounts. Client-side demo credentials are not secure and must not be used with real student data.
 
-### Step 2: Set Up Python Virtual Environment
-Check that Python 3.10+ is installed:
-```powershell
-python --version
-```
-Create a dedicated virtual environment:
+### Run the standalone API (optional)
+
+Use Python 3.10 through 3.12 and install the API dependencies:
+
 ```powershell
 python -m venv venv
-```
-Activate the virtual environment:
-```powershell
-# If execution policy blocks scripts, allow for CurrentUser first:
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-
 .\venv\Scripts\Activate.ps1
-```
-*(Your PowerShell prompt will now show `(venv)`)*
-
----
-
-### Step 3: Install Required Dependencies
-Install all requirements from `requirements.txt`:
-```powershell
-pip install --upgrade pip
+python -m pip install --upgrade pip
 pip install -r requirements.txt
-```
-
----
-
-### Step 4: Configure MySQL Database
-Make sure MySQL 8.0 Server is running (or via XAMPP / MySQL Workbench).
-Connect to MySQL CLI:
-```powershell
-mysql -u root -p
-```
-Run the schema script:
-```sql
-SOURCE database/schema.sql;
-SOURCE database/sample_data.sql;
-SHOW TABLES IN placement_analysis;
-EXIT;
-```
-
----
-
-### Step 5: Configure Environment Variables
-Create your `.env` configuration file in PowerShell:
-```powershell
 Copy-Item .env.example .env
-```
-Edit `.env` with your MySQL credentials:
-```env
-MYSQL_HOST=localhost
-MYSQL_PORT=3306
-MYSQL_USER=root
-MYSQL_PASSWORD=your_mysql_password
-MYSQL_DB=placement_analysis
-SECRET_KEY=placement_portal_secret_key_2024
-```
-
----
-
-### Step 6: Start the Flask Backend Server
-Run the Flask server:
-```powershell
 python app.py
 ```
-Output will confirm:
-```text
- * Serving Flask app 'app'
- * Debug mode: on
- * Running on http://127.0.0.1:5000
-```
 
----
+The API currently provides `/api/health` and `/api/predict`. MySQL schema and sample data are in `database/`; the current frontend does not use them. Configure private database credentials in `.env` only if you use the database connection helper.
 
-### Step 7: Access the System
-Open your web browser and navigate to:
-```text
-http://127.0.0.1:5000
-```
-Default Administrator Login Credentials:
-- **Email:** `tpo@university.edu.in`
-- **Password:** `Placement@2024`
-- **Role:** Placement Officer / Administrator
+### Deploy the frontend to Vercel
+
+Import the repository in Vercel and use the Vite preset, build command `npm run build`, and output directory `dist`. The `vercel.json` file configures the SPA fallback. This deploys the frontend only, not the Flask API or MySQL database. No frontend environment variables are required.
